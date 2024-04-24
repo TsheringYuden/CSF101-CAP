@@ -1,62 +1,67 @@
-class GameScoreCalculator:
-    def __init__(self, playing_a_game):
-        # Initialize the object with the path to the input file and the scoring system
-        self.playing_a_game = playing_a_game  # Path to the input file
-        self.scores = {
-            ('A', 'X'): (3, 0),  # Rock vs. Scissors (Win): (Player, Opponent)
-            ('A', 'Y'): (1, 3),  # Rock vs. Rock (Draw): (Player, Opponent)
-            ('A', 'Z'): (2, 6),  # Rock vs. Paper (Loss): (Player, Opponent)
-            ('B', 'X'): (1, 0),  # Paper vs. Rock (Win): (Player, Opponent)
-            ('B', 'Y'): (2, 3),  # Paper vs. Paper (Draw): (Player, Opponent)
-            ('B', 'Z'): (3, 6),  # Paper vs. Scissors (Loss): (Player, Opponent)
-            ('C', 'X'): (2, 0),  # Scissors vs. Rock (Win): (Player, Opponent)
-            ('C', 'Y'): (3, 3),  # Scissors vs. Scissors (Draw): (Player, Opponent)
-            ('C', 'Z'): (1, 6)   # Scissors vs. Paper (Loss): (Player, Opponent)
-        }
+# Function to read input from a file
+def load_input(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            # Read lines from the file and strip spaces
+            lines = file.readlines()
+            input_data = [line.strip().replace(' ', '') for line in lines]
+            return input_data
+    except FileNotFoundError:
+        # Handle the case when the file is not found
+        print(f"File '{file_path}' not found.")
+        return []
 
-    def read_input(self):
-        # Read input data from the specified file
-        try:
-            with open(self.playing_a_game, 'r') as file:
-                lines = file.readlines()
-                # Extract and format conditions pairs
-                input_data = [line.strip().replace(' ', '') for line in lines]
-                return input_data
-        except FileNotFoundError:
-            # Handle the case when the file is not found
-            print(f"File '{self.playing_a_game}' not found.")
-            return []
-        except Exception as e:
-            # Handle any other errors that may occur while reading the file
-            print(f"An error occurred while reading the file: {e}")
-            return []
+# Function to calculate the score based on given conditions
+def calculate_total_score(input_data):
+    # Assign scores for different conditions
+    A = 1
+    B = 2
+    C = 3
+    X = 0
+    Y = 3
+    Z = 6
+    
+    # Initializing the total score
+    total_score = 0
+    
+    # Iterate through input conditions
+    for conditions in input_data:
+        if conditions == 'AX':
+            # If opponent chooses Rock and the event should end by loss
+            # I should choose scissor and accordingly score is updated
+            total_score += C + X
+        elif conditions == 'AY':
+            # If opponent chooses Rock and the event should end by draw
+            # I should choose ROCK and accordingly score is updated
+            total_score += A + Y
+        elif conditions == 'AZ':
+            # If opponent chooses Rock and the event should end by win
+            # I should choose paper and accordingly score is updated
+            total_score += B + Z
+        elif conditions == 'BX':
+            total_score += A + X
+        elif conditions == 'BY':
+            total_score += B + Y
+        elif conditions == 'BZ':
+            total_score += C + Z
+        elif conditions == 'CX':
+            total_score += B + X
+        elif conditions == 'CY':
+            total_score += C + Y
+        elif conditions == 'CZ':
+            total_score += A + Z
 
-    def calculate_score(self):
-        # Calculate the total score based on the input data and the scoring system
-        input_data = self.read_input()
-        if not input_data:
-            return 0  # Return 0 if input data is empty
-        
-        total_score = 0
-        # Iterate over each conditions pair in the input data
-        for conditions in input_data:
-            # Extract opponent move and outcome from the conditions pair
-            opponent_move, outcome = conditions[0], conditions[1]
-            # Look up the corresponding score pair from the scores dictionary
-            score_pair = self.scores.get((opponent_move, outcome), (0, 0))  # Default to (0, 0) if not found
-            # Update the total score with the player and opponent scores
-            total_score += sum(score_pair)
-        
-        return total_score
+    # Returning the total score 
+    return total_score
 
-# Specify the input file path
-playing_a_game = 'CSF101-CAP/input_0_cap1.txt'
+# File path containing input data
+file_path = 'input_0_cap1.txt'
 
-# Create an instance of GameScoreCalculator
-calculator = GameScoreCalculator(playing_a_game)
+# Read input from file
+input_data = load_input(file_path)
 
-# Calculate the total score
-total_score = calculator.calculate_score()
-
-# Print the total score
-print(f"Total score: {total_score}")
+# Check if input data is available
+if input_data:
+    # Calculate total score based on input data
+    total_score = calculate_total_score(input_data)
+    print(f"Total score: {total_score}")
